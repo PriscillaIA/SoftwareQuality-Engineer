@@ -98,7 +98,7 @@ describe('First Test Suit', () => {
 
     });
 
-    it.only('Extract text values', () => {
+    it('Extract text values', () => {
 
         cy.contains('Forms').click();
         cy.contains('Form Layouts').click();
@@ -108,15 +108,36 @@ describe('First Test Suit', () => {
         //cy.get('[for="exampleInputPassword1"]'). should('contain', 'Password');
         //cy.get('label.label').find('[class="text"]').contains('Check me out');
 
-        //Save the value o text in variable
+        //Save the value of text in variable
         cy.get('[for="exampleInputEmail1"]').then(label => { 
             //don't need to wrap the label object because JQuery objects have the method text
             const labelText = label.text();
             expect(labelText).to.equal('Email address'); //Jquery assertion
-            
             //Wraping the object to use cypress assertion command
             cy.wrap(label).should('contain', 'Email address')
         });
+
+        //Instead of to use Jquare method 'then' we can use a cypress method named 'invoke'
+        cy.get('[for="exampleInputEmail1"]').invoke('text').then(text => {
+            expect(text).to.equal('Email address');
+        });
+
+        cy.get('[for="exampleInputEmail1"]').invoke('text').should('contain', 'Email address');
+        
+        //invoke wit allias
+        cy.get('[for="exampleInputEmail1"]').invoke('text').as('labelText').should('contain', 'Email address');
+        cy.get('@labelText').should('contain', 'Email address');
+
+        //invoke the attribute. Some times validate de attribute can help us validade the state of aplication 
+        cy.get('[for="exampleInputEmail1"]').invoke('attr', 'class').then(classValue => {
+            expect(classValue).to.equal('label');
+        });
+
+        //Invoke Propertys
+        cy.get('#exampleInputEmail1').type('pdesouza@gmail.com');
+        cy.get('#exampleInputEmail1').invoke('prop', 'value').should('contain', 'pdesouza@gmail.com')
+
+
     });
  
     it('Radio Buttons', () => {    
@@ -130,4 +151,16 @@ describe('First Test Suit', () => {
         });
     });
 
+    it('Checkboxs', () => {   
+        cy.contains('Modal & Overlays').click();
+        cy.contains('Toastr').click();
+        cy.get('[type="checkbox"]').check({force:true}); // cypress avoid clicking on elements that are covered for another status. That is, verify the current status element (check or uncheck), and if be different then don't click (check or uncheck). Then we use {force:true} to force the metodo execute the action
+        cy.get('[type="checkbox"]').eq(2).uncheck({force:true}); // need {force:true} because the current element's status is check, that is, different of uncheck
+        cy.get('[type="checkbox"]').eq(2).uncheck(); // don't need {force:true}, because the current status (uncheck) is equal
+        cy.get('[type="checkbox"]').eq(2).check({force:true}); //need {force:true} because check will cover the previous element status (uncheck)
+        
+        cy.get('[type="checkbox"]').eq(0).uncheck({force:true});
+        cy.get('[type="checkbox"]').eq(0).click({force:true}); // method click don't verify the current element status, just click.
+
+    });
 });
