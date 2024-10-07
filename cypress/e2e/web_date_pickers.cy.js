@@ -53,17 +53,17 @@ describe('Test Suit 7', () => {
         cy.contains('nb-card', 'Common Datepicker').find('input').then(input => {
             cy.wrap(input).click();
 
-            function selectDatFromCurrent(){
+            function selectDayFromCurrent(){
                 cy.get('nb-calendar-navigation').invoke('attr', 'ng-reflect-date').then(dateAttribute => {
                     if(!dateAttribute.includes(futureMonth) || !dateAttribute.includes(futureYear)){
                         cy.get('[data-name="chevron-right"]').click();
-                        selectDatFromCurrent();
+                        selectDayFromCurrent();
                     }else{
                         cy.get('.day-cell').not('.bounding-month').contains(futureDayObject).click();                        
                     }
                 });
             }
-            selectDatFromCurrent();
+            selectDayFromCurrent();
             cy.wrap(input).invoke('prop','value').should('contain',dateToAssert);
             cy.wrap(input).should('have.value', dateToAssert);
         });
@@ -71,7 +71,7 @@ describe('Test Suit 7', () => {
     //Improve the organization of code
     it.only('Web Date Pickers - select month and year', () => {   
 
-        function selectDatFromCurrent(day){
+        function selectDayFromCurrent(day){
             let currentDateObject = new Date();
             let dayAtual = currentDateObject.toDateString(); // don't make part of code, just do see the day at cy.lo
             currentDateObject.setDate(currentDateObject.getDate() + day);
@@ -87,7 +87,7 @@ describe('Test Suit 7', () => {
             cy.get('nb-calendar-navigation').invoke('attr', 'ng-reflect-date').then(dateAttribute => {
                 if(!dateAttribute.includes(futureMonth) || !dateAttribute.includes(futureYear)){
                     cy.get('[data-name="chevron-right"]').click();
-                    selectDatFromCurrent(day);
+                    selectDayFromCurrent(day);
                 }else{
                     cy.get('.day-cell').not('.bounding-month').contains(futureDayObject).click();                        
                 }
@@ -100,7 +100,7 @@ describe('Test Suit 7', () => {
 
         cy.contains('nb-card', 'Common Datepicker').find('input').then(input => {
             cy.wrap(input).click();
-            const dateToAssert = selectDatFromCurrent(400);
+            const dateToAssert = selectDayFromCurrent(400);
             cy.wrap(input).invoke('prop','value').should('contain',dateToAssert);
             cy.wrap(input).should('have.value', dateToAssert);
         });
